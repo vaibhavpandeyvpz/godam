@@ -14,6 +14,7 @@ namespace Godam\Store;
 /**
  * Class RedisStoreTest
  * @package Godam\Store
+ * @requires extension redis
  */
 class RedisStoreTest extends StoreTestAbstract
 {

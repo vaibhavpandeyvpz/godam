@@ -14,6 +14,7 @@ namespace Godam\Store;
 /**
  * Class MemcacheStoreTest
  * @package Godam\Store
+ * @requires extension memcache
  */
 class MemcacheStoreTest extends StoreTestAbstract
 {
