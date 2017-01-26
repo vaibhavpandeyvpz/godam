@@ -1,0 +1,30 @@
+after_success: bash <(curl -s https://codecov.io/bash)
+
+before_install: travis_retry composer self-update
+
+before_script: if [[ $TRAVIS_PHP_VERSION != hhvm* ]]; then phpenv config-add php.ini; fi
+
+branches:
+    only: master
+
+cache:
+    directories: $HOME/.composer/cache
+
+install: travis_retry composer install --dev --no-interaction --prefer-dist
+
+language: php
+
+php:
+    - 5.3
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - 7.1
+    - hhvm
+
+script: vendor/bin/phpunit
+
+services:
+    - memcached
+    - redis-server
