@@ -49,10 +49,9 @@ class CacheValidations
      */
     public static function normalizeExpiry($expiration)
     {
-        if (is_null($expiration)) {
-            return $expiration;
+        if (null !== $expiration) {
+            return (int)$expiration->format('U');
         }
-        return (int)$expiration->format('U');
     }
 
     /**
