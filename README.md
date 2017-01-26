@@ -27,6 +27,17 @@ Usage
  * @desc Create an instance of Godam\StoreInterface
  */
 $store = new Godam\Store\MemoryStore();
+// Or
+$memcache = new Memcache();
+$memcache->connect('localhost', 11211);
+$store = new Godam\Store\MemcacheStore($memcache);
+// Or
+$redis = new Predis\Client('tcp://127.0.0.1:6379');
+$store = new Godam\Store\PredisStore($redis);
+// Or
+$redis = new Redis();
+$redis->connect('localhost', 6379);
+$store = new Godam\Store\RedisStore($redis);
 
 /*
  * @desc Using the simple cache (PSR-16)
