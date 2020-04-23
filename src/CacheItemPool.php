@@ -134,7 +134,7 @@ class CacheItemPool implements CacheItemPoolInterface
             ));
         }
         throw new InvalidArgumentException(sprintf(
-            "Cannot only handle items of type 'Vidyut\\Cache\\CacheItem'; '%s' given", get_class($item)
+            "Cannot only handle items of type 'Godam\\CacheItem'; '%s' given", get_class($item)
         ));
     }
 
