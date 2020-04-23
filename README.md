@@ -28,6 +28,8 @@ Usage
  */
 $store = new Godam\Store\MemoryStore();
 // Or
+$store = new Godam\Store\FileSystemStore(__DIR__ . '/cache');
+// Or
 $memcache = new Memcache();
 $memcache->connect('localhost', 11211);
 $store = new Godam\Store\MemcacheStore($memcache);
@@ -40,7 +42,7 @@ $redis->connect('localhost', 6379);
 $store = new Godam\Store\RedisStore($redis);
 
 /*
- * @desc Using the simple cache (PSR-16)
+ * @desc Using the simpler, PSR-16 cache
  */
 $cache = new Godam\Cache($store);
 $cache->set('somekey', 'somevalue', 3600 /** ttl in second(s), can be null */);
@@ -48,7 +50,7 @@ $value = $cache->get('somekey');
 $cache->delete('somekey');
 
 /*
- * @desc Or the cache item pool (PSR-6)
+ * @desc Or the older, PSR-6 item pool
  */
 $cache = new Godam\CacheItemPool($store);
 $item = $cache->getItem('somekey');
