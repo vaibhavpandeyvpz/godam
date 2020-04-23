@@ -33,7 +33,7 @@ class CacheValidations
     {
         if (is_string($key)) {
             if (preg_match('~[\(\)\{\}\[\]/\\\:;]~', $key)) {
-                throw new InvalidArgumentException("Key '{$key}' contains invalid characters");
+                throw new InvalidArgumentException("Key '{$key}' must contain path-safe characters.");
             }
         } else {
             throw new InvalidArgumentException(sprintf(
