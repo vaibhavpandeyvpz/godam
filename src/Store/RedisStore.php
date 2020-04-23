@@ -67,7 +67,8 @@ class RedisStore implements StoreInterface
      */
     public function has($key)
     {
-        return $this->redis->exists($key);
+        $value = (int)$this->redis->exists($key);
+        return $value === 1;
     }
 
     /**
