@@ -8,7 +8,7 @@ A modern, PSR-6 and PSR-16 compliant caching library for PHP 8.2+ with support f
 [![Downloads](https://img.shields.io/packagist/dt/vaibhavpandeyvpz/godam.svg?style=flat-square)](https://packagist.org/packages/vaibhavpandeyvpz/godam)
 [![PHP Version](https://img.shields.io/packagist/php-v/vaibhavpandeyvpz/godam.svg?style=flat-square)](https://packagist.org/packages/vaibhavpandeyvpz/godam)
 [![License](https://img.shields.io/packagist/l/vaibhavpandeyvpz/godam.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/vaibhavpandeyvpz/godam/tests.yml?branch=main&style=flat-square)](https://github.com/vaibhavpandeyvpz/godam/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/vaibhavpandeyvpz/godam/tests.yml?branch=master&style=flat-square)](https://github.com/vaibhavpandeyvpz/godam/actions)
 
 ## Features
 
