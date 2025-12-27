@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of vaibhavpandeyvpz/godam package.
  *
  * (c) Vaibhav Pandey <contact@vaibhavpandey.com>
  *
  * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.md.
+ * with this source code in the file LICENSE.
  */
 
 namespace Godam\Store;
@@ -14,46 +16,55 @@ namespace Godam\Store;
 use Godam\StoreInterface;
 
 /**
- * Class FileSystemStore
- * @package Godam\Store
+ * File system-based cache store implementation.
+ *
+ * Stores cache items as serialized files on the filesystem using a two-level
+ * directory structure based on key hash to avoid too many files in a single directory.
+ *
+ * @implements StoreInterface
  */
-class FileSystemStore implements StoreInterface
+final class FileSystemStore implements StoreInterface
 {
-    protected $directory;
+    /**
+     * @param  string  $directory  The base directory where cache files will be stored
+     */
+    public function __construct(
+        private readonly string $directory
+    ) {}
 
     /**
-     * FileSystemStore constructor.
-     * @param string $directory
+     * Clears all cache files from the directory.
+     *
+     * @return bool True if the directory was successfully cleared, false otherwise
      */
-    public function __construct($directory)
-    {
-        $this->directory = $directory;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function clear()
+    public function clear(): bool
     {
         if (is_dir($this->directory)) {
             self::deleteDirectoryContents($this->directory);
         }
+
         return true;
     }
 
     /**
-     * {@inheritdoc}
+     * Deletes a cache file from the filesystem.
+     *
+     * @param  string  $key  The key of the item to delete
+     * @return bool True if the file was successfully deleted, false if it didn't exist
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         $file = self::getPathToFile($this->directory, $key);
-        return is_file($file) ? unlink($file) : false;
+
+        return is_file($file) && unlink($file);
     }
 
     /**
-     * @param $directory
+     * Recursively deletes all contents of a directory.
+     *
+     * @param  string  $directory  The directory to clear
      */
-    private static function deleteDirectoryContents($directory)
+    private static function deleteDirectoryContents(string $directory): void
     {
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS),
@@ -72,50 +83,71 @@ class FileSystemStore implements StoreInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves a cache item from the filesystem.
+     *
+     * @param  string  $key  The key of the item to retrieve
+     * @return mixed The unserialized value, or null if the file doesn't exist
      */
-    public function get($key)
+    public function get(string $key): mixed
     {
         $file = self::getPathToFile($this->directory, $key);
-        if (is_file($file)) {
-            $contents = file_get_contents($file);
-            return unserialize($contents);
+        if (! is_file($file)) {
+            return null;
         }
-        return null;
+
+        $contents = file_get_contents($file);
+
+        return $contents !== false ? unserialize($contents) : null;
     }
 
     /**
-     * @param string $directory
-     * @param string $key
-     * @return string
+     * Generates the file path for a given cache key.
+     *
+     * Uses a two-level directory structure based on key hash to distribute files.
+     *
+     * @param  string  $directory  The base directory
+     * @param  string  $key  The cache key
+     * @return string The full path to the cache file
      */
-    private static function getPathToFile($directory, $key)
+    private static function getPathToFile(string $directory, string $key): string
     {
         $hash = crc32($key);
-        $l1 = $hash / 100 % 100;
+        $l1 = (int) ($hash / 100 % 100);
         $l2 = $hash % 100;
-        return $directory . DIRECTORY_SEPARATOR . $l1 . DIRECTORY_SEPARATOR . $l2 . DIRECTORY_SEPARATOR . $key;
+
+        return sprintf('%s%s%d%s%d%s%s', $directory, DIRECTORY_SEPARATOR, $l1, DIRECTORY_SEPARATOR, $l2, DIRECTORY_SEPARATOR, $key);
     }
 
     /**
-     * {@inheritdoc}
+     * Checks if a cache file exists.
+     *
+     * @param  string  $key  The key to check
+     * @return bool True if the file exists, false otherwise
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         $file = self::getPathToFile($this->directory, $key);
+
         return is_file($file);
     }
 
     /**
-     * {@inheritdoc}
+     * Stores a cache item to the filesystem.
+     *
+     * Creates parent directories if they don't exist and serializes the value.
+     *
+     * @param  string  $key  The key under which to store the value
+     * @param  mixed  $value  The value to store (will be serialized)
+     * @return bool True if the file was successfully written, false otherwise
      */
-    public function set($key, $value)
+    public function set(string $key, mixed $value): bool
     {
         $file = self::getPathToFile($this->directory, $key);
         $parent = pathinfo($file, PATHINFO_DIRNAME);
-        if (!is_dir($parent)) {
+        if (! is_dir($parent)) {
             mkdir($parent, 0755, true);
         }
+
         return file_put_contents($file, serialize($value)) !== false;
     }
 }
