@@ -112,7 +112,7 @@ final class FileSystemStore implements StoreInterface
     private static function getPathToFile(string $directory, string $key): string
     {
         $hash = crc32($key);
-        $l1 = (int) ($hash / 100 % 100);
+        $l1 = intdiv($hash, 100) % 100;
         $l2 = $hash % 100;
 
         return sprintf('%s%s%d%s%d%s%s', $directory, DIRECTORY_SEPARATOR, $l1, DIRECTORY_SEPARATOR, $l2, DIRECTORY_SEPARATOR, $key);
